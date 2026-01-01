@@ -13,5 +13,6 @@ urlpatterns = [
     path('token/verify/', TokenVerifyView.as_view(), name='token_verify'),
 
     path('register/', UserViews.RegisterView.as_view()),
+    path('protected-view/', UserViews.protected_view.as_view()),
 
 ]
