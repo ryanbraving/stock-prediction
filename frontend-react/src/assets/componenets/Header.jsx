@@ -1,13 +1,13 @@
 // import {useContext} from 'react'
 import Button from './Button'
-// import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router'
 
 const Header = () => {
 
   return (
     <>
         <nav className='navbar container pt-3 pb-3 align-items-start'>
-            <a className='navbar-brand text-light' to="/">Stock Prediction</a>
+            <Link className='navbar-brand text-light' to="/">Stock Prediction</Link>
 
             <div>
                 <>

@@ -1,0 +1,4 @@
+django==6.0
+python-decouple
+djangorestframework
+django-cors-headers
