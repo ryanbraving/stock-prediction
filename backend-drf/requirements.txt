@@ -13,3 +13,5 @@ keras
 mangum
 boto3
 pillow
+psycopg2-binary
+dj-database-url
