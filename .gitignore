@@ -1,6 +1,9 @@
 # Created by https://www.toptal.com/developers/gitignore/api/django,react
 # Edit at https://www.toptal.com/developers/gitignore?templates=django,react
 
+# Ignore all files in trained_models but keep the folder
+backend-drf/trained_models/*
+!backend-drf/trained_models/.gitkeep
 ### PyChram ###
 .idea
 
