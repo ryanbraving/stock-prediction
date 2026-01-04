@@ -10,3 +10,6 @@ matplotlib
 scikit-learn
 tensorflow
 keras
+mangum
+boto3
+pillow

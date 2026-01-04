@@ -24,6 +24,8 @@ const Header = () => {
                 <>
                 <Button text='Dashboard' class="btn-info" url="/dashboard" />
                 &nbsp;
+                <Button text='Train ML Model' class="btn-info" url="/training" />
+                &nbsp;
                 <button className='btn btn-danger' onClick={handleLogout}>Logout</button>
                 </>
               ) : (

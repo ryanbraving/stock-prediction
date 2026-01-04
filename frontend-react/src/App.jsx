@@ -6,6 +6,7 @@ import Footer from './assets/componenets/Footer.jsx'
 import Register from './assets/componenets/Register.jsx'
 import Login from './assets/componenets/Login.jsx'
 import Dashboard from './assets/componenets/dashboard/Dashboard.jsx'
+import Training from './assets/componenets/dashboard/Training.jsx'
 import { BrowserRouter, Routes, Route } from 'react-router'
 import AuthProvider from './AuthProvider.jsx'
 import PrivateRoute from "./PrivateRoute.jsx";
@@ -21,6 +22,7 @@ function App() {
           <Route path='/register' element={<PublicRoute><Register /></PublicRoute>} />
           <Route path='/login' element={<PublicRoute><Login /></PublicRoute>} />
           <Route path='/dashboard' element={<PrivateRoute><Dashboard /></PrivateRoute>} />
+          <Route path='/training' element={<PrivateRoute><Training /></PrivateRoute>} />
         </Routes>
         <Footer />
       </BrowserRouter>
