@@ -10,8 +10,7 @@ matplotlib
 scikit-learn
 tensorflow
 keras
-mangum
-boto3
-pillow
+celery
+redis
 psycopg2-binary
 dj-database-url

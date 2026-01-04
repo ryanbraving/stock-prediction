@@ -2,8 +2,9 @@ import {useEffect, useState} from 'react'
 import axiosInstance from '../../../axiosInstance.js'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSpinner } from '@fortawesome/free-solid-svg-icons'
+import { Link } from 'react-router'
 
-const Dashboard = () => {
+const Forecast = () => {
     const [ticker, setTicker] = useState('')
     const [error, setError] = useState()
     const [loading, setLoading] = useState(false)
@@ -15,6 +16,7 @@ const Dashboard = () => {
     const [rmse, setRMSE] = useState()
     const [r2, setR2] = useState()
     const [modelInfo, setModelInfo] = useState()
+    const [showNoModelMessage, setShowNoModelMessage] = useState(false)
 
     useEffect(()=>{
         const fetchProtectedData = async () =>{
@@ -30,8 +32,9 @@ const Dashboard = () => {
     const handleSubmit = async (e) =>{
         e.preventDefault();
         setLoading(true)
+        setShowNoModelMessage(false)
         try{
-            const response = await axiosInstance.post('/predict/', {
+            const response = await axiosInstance.post('/forecast/', {
                 ticker: ticker
             });
             console.log(response.data);
@@ -44,11 +47,17 @@ const Dashboard = () => {
             setMA100(ma100Url)
             setMA200(ma200Url)
             setPrediction(predictionUrl)
-            setMSE(response.data.mse)
-            setRMSE(response.data.rmse)
-            setR2(response.data.r2)
+            setMSE(response.data.model_performance.mse)
+            setRMSE(response.data.model_performance.rmse)
+            setR2(response.data.model_performance.r2)
             setModelInfo(response.data.model_info)
             setError("")
+            // Check if using default model (no specific model for ticker)
+            if (response.data.model_info?.includes("doesn't exist") || 
+                response.data.model_info?.includes('using default')) {
+                setShowNoModelMessage(true)
+                setPrediction(false)
+            }
             // Set plots
             if(response.data.error){
                 setError(response.data.error)
@@ -56,6 +65,17 @@ const Dashboard = () => {
             }
         }catch(error){
             console.error('There was an error making the API request', error)
+            // Check if it's a model not found error
+            if (error.response?.status === 404 || 
+                error.response?.data?.error?.includes('No data found') ||
+                modelInfo?.includes("doesn't exist") ||
+                modelInfo?.includes('using default')) {
+                setShowNoModelMessage(true)
+                setError("")
+                setPrediction(false)
+            } else {
+                setError('Failed to get prediction')
+            }
         }finally{
             setLoading(false);
         }
@@ -70,8 +90,19 @@ const Dashboard = () => {
                     onChange={(e) => setTicker(e.target.value)} required
                     />
                     <small>{error && <div className='text-danger'>{error}</div>}</small>
+                    
+                    {/* No Model Available Message */}
+                    {showNoModelMessage && (
+                        <div className="alert alert-warning mt-3">
+                            <strong>⚠️ No trained model available for {ticker.toUpperCase()}</strong>
+                            <p className="mb-2">Please train a model first to get predictions for this ticker.</p>
+                            <Link to="/training" className="btn btn-sm btn-primary">
+                                Go to Model Training Page
+                            </Link>
+                        </div>
+                    )}
                     <button type='submit' className='btn btn-info mt-3'>
-                        {loading ? <span><FontAwesomeIcon icon={faSpinner} spin /> Please wait...</span>: 'See Prediction'}
+                        {loading ? <span><FontAwesomeIcon icon={faSpinner} spin /> Please wait...</span>: 'See Forecast'}
                     </button>
                 </form>
             </div>
@@ -79,9 +110,9 @@ const Dashboard = () => {
             {/* Print prediction plots */}
             {prediction && (
                 <div className="prediction mt-5">
-                <div className="alert alert-info">
-                    <strong>{modelInfo}</strong>
-                </div>
+                {/*<div className="alert alert-info">*/}
+                {/*    <strong>{modelInfo}</strong>*/}
+                {/*</div>*/}
                 <div className="p-3">
                     {plot && (
                         <img src={plot} style={{ maxWidth: '100%' }} />
@@ -122,4 +153,4 @@ const Dashboard = () => {
   )
 }
 
-export default Dashboard
+export default Forecast

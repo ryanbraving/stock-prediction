@@ -1,16 +1,10 @@
+version: '3.8'
+
 services:
-  db:
-    image: postgres:17-alpine
-    environment:
-      POSTGRES_DB: stockprediction
-      POSTGRES_USER: stockuser
-      POSTGRES_PASSWORD: stockpass123
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
+  redis:
+    image: redis:7-alpine
     ports:
-      - "5432:5432"
-    networks:
-      - app-network
+      - "6379:6379"
 
   backend:
     build:
@@ -20,31 +14,39 @@ services:
       - "8000:8000"
     volumes:
       - ./backend-drf:/app
-      - media_volume:/app/media
     environment:
-      - DEBUG=1
-      - DJANGO_SETTINGS_MODULE=core.settings
-      - DATABASE_URL=postgresql://stockuser:stockpass123@db:5432/stockprediction
+      - DEBUG=True
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
     depends_on:
-      - db
-    networks:
-      - app-network
+      - redis
+    command: python manage.py runserver 0.0.0.0:8000
+
+  celery:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    volumes:
+      - ./backend-drf:/app
+    environment:
+      - DEBUG=True
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+    depends_on:
+      - redis
+      - backend
+    command: celery -A core worker --loglevel=info --concurrency=1 --pool=solo
+    mem_limit: 2g
 
   frontend:
     build:
       context: .
       dockerfile: Dockerfile.frontend
     ports:
-      - "3000:3000"
-    depends_on:
-      - backend
-    networks:
-      - app-network
-
-volumes:
-  media_volume:
-  postgres_data:
-
-networks:
-  app-network:
-    driver: bridge
+      - "3000:5173"
+    volumes:
+      - ./frontend-react:/app
+      - /app/node_modules
+    environment:
+      - VITE_API_URL=http://localhost:8000
+    command: npm run dev -- --host 0.0.0.0

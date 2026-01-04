@@ -5,7 +5,7 @@ from rest_framework_simplejwt.views import (
     TokenRefreshView,
 )
 from rest_framework_simplejwt.views import TokenVerifyView
-from .views import StockPredictionAPIView, TrainStockModelAPIView, StockPredictionWithPotentialEarningAPIView
+from .views import StockPredictionAPIView, TrainStockModelAPIView, StockPredictionWithPotentialEarningAPIView, TaskStatusAPIView, TrainedModelsAPIView
 
 
 urlpatterns = [
@@ -16,10 +16,13 @@ urlpatterns = [
     path('register/', UserViews.RegisterView.as_view()),
     path('protected-view/', UserViews.protected_view.as_view()),
 
-    # Prediction API
-    path('predict/', StockPredictionAPIView.as_view(), name='stock_prediction'),
-    # path('predict-earnings/', StockPredictionWithPotentialEarningAPIView.as_view(), name='stock_prediction_earnings'),
+    # Forecast API
+    path('forecast/', StockPredictionWithPotentialEarningAPIView.as_view(), name='stock_prediction'),
     # Train model API
     path('train/', TrainStockModelAPIView.as_view(), name='train_model'),
+    # Task status API
+    path('task-status/<str:task_id>/', TaskStatusAPIView.as_view(), name='task_status'),
+    # Trained models API
+    path('trained-models/', TrainedModelsAPIView.as_view(), name='trained_models'),
 
 ]

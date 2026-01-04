@@ -7,7 +7,7 @@ const PublicRoute = ({children}) => {
   return !isLoggedIn ? (
     children
   ) : (
-    <Navigate to='/dashboard' />
+    <Navigate to='/forecast' />
   )
 }
 

@@ -16,15 +16,15 @@ const Header = () => {
   }
   return (
     <>
-        <nav className='navbar container pt-3 pb-3 align-items-start'>
+        <nav className='navbar container pt-3 pb-5 align-items-start'>
             <Link className='navbar-brand text-light' to="/">Stock Prediction App</Link>
 
             <div>
               {isLoggedIn ? (
                 <>
-                <Button text='Dashboard' class="btn-info" url="/dashboard" />
+                <Button text='Forecast' class="btn-info" url="/forecast" />
                 &nbsp;
-                <Button text='Train ML Model' class="btn-info" url="/training" />
+                <Button text='Model Training' class="btn-info" url="/training" />
                 &nbsp;
                 <button className='btn btn-danger' onClick={handleLogout}>Logout</button>
                 </>
